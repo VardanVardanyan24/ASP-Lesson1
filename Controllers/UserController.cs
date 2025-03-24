@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Text;
 using Lesson1;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lesson1.Controllers
 {
@@ -9,45 +12,51 @@ namespace Lesson1.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserRepository repoo;
-
-        public UserController(UserRepository repo)
+        private static List<User> users = new List<User>
         {
-            this.repoo = repo;
-        }
+            new User { Id = 1, Email = "john.doe@example.com", First_Name = "John", Last_Name = "Doe", Avatar = "john_avatar.png" },
+            new User { Id = 2, Email = "jane.smith@example.com", First_Name = "Jane", Last_Name = "Smith", Avatar = "jane_avatar.png" },
+            new User { Id = 3, Email = "alice.johnson@example.com", First_Name = "Alice", Last_Name = "Johnson", Avatar = "alice_avatar.png" }
+        };
 
-
-
-        // GET: api/<BooksController>
-        [HttpGet]
-        public IEnumerable<User> Get([FromServices] UserRepository repoo2)
-        {
-            return new List<User>() { repoo.Get(1), repoo2.Get(2) };
-        }
-
-        // GET api/<BooksController>/5
         [HttpGet("{id}")]
-        public User Get([FromServices] UserRepository repo, int id)
+        public ActionResult<User> GetUserById(int id)
         {
-            return repoo.Get(id);
+            var user = users.FirstOrDefault(u => u.Id == id);
+            if (user == null) return NotFound();
+            return Ok(user);
         }
 
-        // POST api/<BooksController>
         [HttpPost]
-        public void Post()
+        public ActionResult<User> CreateUser(User user)
         {
+            users.Add(user);
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
         }
 
-        // PUT api/<BooksController>/5
         [HttpPut("{id}")]
-        public void Put()
+        public ActionResult UpdateUser(int id, User updatedUser)
         {
+            var user = users.FirstOrDefault(u => u.Id == id);
+            if (user == null) return NotFound();
+
+            user.Email = updatedUser.Email;
+            user.First_Name = updatedUser.First_Name;
+            user.Last_Name = updatedUser.Last_Name;
+            user.Avatar = updatedUser.Avatar;
+
+            return NoContent();
         }
 
-        // DELETE api/<BooksController>/5
         [HttpDelete("{id}")]
-        public void Delete()
+        public ActionResult DeleteUser(int id)
         {
+            var user = users.FirstOrDefault(u => u.Id == id);
+            if (user == null) return NotFound();
+
+            users.Remove(user);
+            return NoContent();
         }
     }
 }
+
