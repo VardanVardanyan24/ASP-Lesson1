@@ -19,11 +19,11 @@ namespace Lesson1.Controllers
             }
         };
 
-        [HttpGet("byuser/{userId}/{title}")]
-        public ActionResult<List<Post>> GetPostsByUserIdAndTitle(int userId, string title)
+        [HttpGet]
+        public ActionResult<IEnumerable<Post>> GetPostsByUserIdAndTitle(int userId, string title)
         {
             var userPosts = posts.Where(p => p.UserId == userId && p.Title.Contains(title)).ToList();
-            if (userPosts.Count == 0) return NotFound();
+            if (userPosts.Count == 0) return NoContent();
             return Ok(userPosts);
         }
 
