@@ -10,7 +10,7 @@ namespace Lesson1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private static List<User> users = new List<User>
         {
@@ -52,7 +52,7 @@ namespace Lesson1.Controllers
         public ActionResult DeleteUser(int id)
         {
             var user = users.FirstOrDefault(u => u.Id == id);
-            if (user == null) return NotFound();
+            if (user == null) return NoContent();
 
             users.Remove(user);
             return NoContent();
