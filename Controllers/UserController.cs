@@ -30,6 +30,7 @@ namespace Lesson1.Controllers
         [HttpPost]
         public ActionResult<User> CreateUser(User user)
         {
+            user.Id = users.Max(u => u.Id) + 1;
             users.Add(user);
             return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
         }
